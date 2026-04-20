@@ -3,10 +3,14 @@
   "name": "FastMoss TikTok 数据导出",
   "version": "0.1.0",
   "description": "抓取 FastMoss 视频页数据，自动翻页，并导出 TikTok 达人链接和完整表格 CSV。",
+  "icons": {
+    "128": "icon-128.png"
+  },
   "permissions": [
     "activeTab",
     "scripting",
-    "tabs"
+    "tabs",
+    "notifications"
   ],
   "background": {
     "service_worker": "background.js"
@@ -15,6 +19,9 @@
     "https://www.fastmoss.com/*"
   ],
   "action": {
+    "default_icon": {
+      "128": "icon-128.png"
+    },
     "default_title": "FastMoss 导出",
     "default_popup": "popup.html"
   },

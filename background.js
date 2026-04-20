@@ -4,6 +4,7 @@ const runtimeApi = self.FastMossRuntime;
 const TARGET_URL = 'https://www.fastmoss.com/zh/media-source/video';
 const STATE_POLL_MS = 1000;
 const AUTO_RESUME_POLL_MS = 5000;
+const CHALLENGE_NOTIFICATION_ID = 'fastmoss-challenge-detected';
 
 let jobState = runtimeApi.buildJobState({
   message: '等待开始。',
@@ -120,6 +121,7 @@ async function stopJob(options) {
       message: '等待开始。',
       currentPage: '-'
     });
+    syncVisualState();
   }
 }
 
@@ -294,11 +296,71 @@ function sendMessageToTab(tabId, message) {
 }
 
 function updateJobState(patch) {
+  const previousStatus = jobState.status;
+  const previousPauseReason = jobState.pauseReason;
   jobState = runtimeApi.buildJobState(Object.assign({}, jobState, patch));
+  syncVisualState();
+
+  if (jobState.status === 'paused_challenge' && previousStatus !== 'paused_challenge') {
+    notifyChallenge(jobState.pauseReason || previousPauseReason || 'challenge');
+    return;
+  }
+
+  if (previousStatus === 'paused_challenge' && jobState.status !== 'paused_challenge') {
+    clearChallengeNotification();
+  }
 }
 
 function isJobActive(status) {
   return status === 'running' || status === 'paused_challenge' || status === 'paused_manual';
+}
+
+function syncVisualState() {
+  const badge = getBadgeState(jobState.status);
+  chrome.action.setBadgeText({ text: badge.text });
+  chrome.action.setBadgeBackgroundColor({ color: badge.color });
+}
+
+function getBadgeState(status) {
+  if (status === 'running') {
+    return { text: 'RUN', color: '#176735' };
+  }
+
+  if (status === 'paused_challenge') {
+    return { text: 'VERIFY', color: '#a0182a' };
+  }
+
+  if (status === 'error') {
+    return { text: 'ERR', color: '#a0182a' };
+  }
+
+  if (status === 'complete') {
+    return { text: 'OK', color: '#176735' };
+  }
+
+  return { text: '', color: '#455065' };
+}
+
+function notifyChallenge(reason) {
+  chrome.notifications.create(CHALLENGE_NOTIFICATION_ID, {
+    type: 'basic',
+    iconUrl: 'icon-128.png',
+    title: 'FastMoss 需要验证',
+    message: buildChallengeMessage(reason),
+    priority: 2
+  });
+}
+
+function buildChallengeMessage(reason) {
+  if (/cloudflare/i.test(reason || '')) {
+    return '检测到 Cloudflare 验证。请完成验证后，扩展会自动继续抓取。';
+  }
+
+  return '检测到验证码或验证页面。请完成验证后，扩展会自动继续抓取。';
+}
+
+function clearChallengeNotification() {
+  chrome.notifications.clear(CHALLENGE_NOTIFICATION_ID, () => undefined);
 }
 
 function sleep(ms) {
