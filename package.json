@@ -5,6 +5,6 @@
   "description": "Chrome extension for exporting FastMoss video source rows and TikTok creator links.",
   "scripts": {
     "test": "node --test tests/*.test.js",
-    "check": "node --check src/fastmoss-utils.js && node --check content.js && node --check popup.js"
+    "check": "node --check src/fastmoss-runtime.js && node --check src/fastmoss-utils.js && node --check background.js && node --check content.js && node --check popup.js"
   }
 }

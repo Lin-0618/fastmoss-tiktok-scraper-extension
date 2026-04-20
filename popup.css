@@ -84,6 +84,30 @@ input {
   background: #ffffff;
 }
 
+select {
+  width: 96px;
+  border: 1px solid #cfd5e3;
+  border-radius: 6px;
+  padding: 7px 8px;
+  font: inherit;
+  background: #ffffff;
+}
+
+.checkbox-field {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+}
+
+.checkbox-field input {
+  width: 16px;
+  min-width: 16px;
+  height: 16px;
+  margin: 0;
+  padding: 0;
+}
+
 .button-row,
 .exports {
   display: grid;

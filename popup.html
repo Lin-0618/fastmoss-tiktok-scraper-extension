@@ -18,10 +18,26 @@
           <span>最多页数</span>
           <input id="maxPages" type="number" min="1" max="500" value="50">
         </label>
+        <label class="field">
+          <span>速度档位</span>
+          <select id="speedProfile">
+            <option value="slow">慢速</option>
+            <option value="very_slow">很慢</option>
+          </select>
+        </label>
+        <label class="checkbox-field">
+          <input id="backgroundMode" type="checkbox" checked>
+          <span>后台标签页抓取</span>
+        </label>
+        <label class="checkbox-field">
+          <input id="detailEnrichmentEnabled" type="checkbox" checked>
+          <span>补全达人/视频详情</span>
+        </label>
         <div class="button-row">
           <button id="startButton" class="primary" type="button">开始抓取</button>
           <button id="stopButton" type="button">停止</button>
         </div>
+        <button id="resumeButton" type="button">继续抓取</button>
       </section>
 
       <section class="summary" aria-label="抓取状态">
@@ -48,6 +64,7 @@
     </main>
 
     <script src="src/fastmoss-utils.js"></script>
+    <script src="src/fastmoss-runtime.js"></script>
     <script src="popup.js"></script>
   </body>
 </html>
